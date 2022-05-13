@@ -1,0 +1,243 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>view movie</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+            crossorigin="anonymous">
+    </script>
+
+    <script src="../Scripts/ajaxCalls.js"></script>
+
+    <style>
+
+        h1{
+            text-align:center;
+            background-color:wheat;
+        }
+
+        #back {
+            height: 30px;
+            width: 30px;
+        }
+
+        #Big {
+            width: 100%;
+        }
+
+        #MovieDB {
+            background-color: lightyellow;
+            width: 30%;
+            text-align: center;
+            left: 30%;
+            position: relative;
+        }
+
+        #movieH1 {
+            width: 100%;
+            text-align: center;
+            color: lightslategrey;
+        }
+
+        #ruppinGroup {
+            width: 100%;
+            text-align: center;
+            color: lightgray;
+        }
+
+        #getMovie {
+            color: black;
+        }
+
+        .info {
+            border: 1px solid white;
+            background-color: beige;
+            height: 300px;
+        }
+
+        .movie {
+            border: 1px solid white;
+            background-color: papayawhip;
+            height: 300px;
+            width: 370px;
+            text-align: center;
+            float: left;
+        }
+
+            .movie > img {
+                height: 60%;
+            }
+
+
+    </style>
+
+
+
+    <script>
+
+
+
+        $(document).ready(function () {
+
+            checkConnection();           
+
+        });
+
+
+        function checkConnection() {
+            if (localStorage) {
+                getAllMoviesByComapnyID();
+                $("#back").click(homePage);
+            }
+            else {
+            window.location.href = 'LoginPage.html';
+            }
+        }
+
+        function homePage() {
+
+            window.location.href = "HomePage.html";
+
+        }
+
+
+        function getAllMoviesByComapnyID() {
+            var companyId = JSON.parse(localStorage.getItem('companyId')).USERNAME;
+            let api = "../api/Movies?companyId=" + companyId;
+            ajaxCall("GET", api, "", getAllMoviesSuccessCB, getAllMoviesErrorCB)
+        }
+
+        function getAllMoviesSuccessCB(Movies) {
+            console.log(Movies)
+            var str = "";
+            str += "<label>Choose a movie:</label>"
+            str += "</br>"
+            str += "<select id='list' onchange='getNewMovie(this)'>";
+            str += "<option>Select a movie</option>";
+
+
+            for (var i = 0; i < Movies.length; i++) {
+
+                str += "<option id ='" + Movies[i].Id + "' value ='" + Movies[i].Title + "'>";
+                str += Movies[i].Title;
+                str += "</option>";
+
+            }
+
+            str += "</select>";
+            $("#list").html(str);
+            // $("#view").click(getNewMovie);
+        }
+
+        function getAllMoviesErrorCB() {
+            console.log(err)
+        }
+
+
+        //function loadMovies() {
+        //    let apiCall = "../api/Movies/{Id}";
+        //    ajaxCall("GET", apiCall, "", getLmoviesSuccessCB, getLmoviesErrorCB);
+
+        //    function getLmoviesSuccessCB(lm) {
+        //        var str = "";
+        //        str += "<label>Choose a movie:</label>"
+        //        str+= "</br>"
+        //        str += "<select id='list' onchange='getNewMovie(this)'>";
+        //        str += "<option>Select a movie</option>";
+
+
+        //        for (var i = 0; i < lm.length; i++) {
+
+        //            str += "<option id ='" + lm[i].Id + "' value ='" + lm[i].Title + "'>";
+        //            str += lm[i].Title;
+        //            str += "</option>";
+
+        //        }
+
+        //        str += "</select>";
+        //        $("#list").html(str);
+        //       // $("#view").click(getNewMovie);
+        //    }
+
+        //    function getLmoviesErrorCB(err) {
+        //        console.log("Error :" + err);
+        //    }
+
+            
+
+
+        //}
+
+        function getNewMovie(s) {
+            var movieName = s[s.selectedIndex].value;
+            var movieId = s[s.selectedIndex].id;
+            console.log(s[s.selectedIndex].value); 
+            console.log(s[s.selectedIndex].id);
+            let api = "../api/Movies/" + movieName + "/" + movieId ;
+            ajaxCall("Get", api,"", getNewMovieSuccessCB, getNewMovieErrorCB);
+
+
+        }
+
+        function getNewMovieSuccessCB(movie) {
+            console.log(movie);
+            //console.log(movieName);
+            //foreach(Movie m in movie) {
+            //if (movie.some(m => console.log(movie.Ti))) {
+
+                    let path = "https://image.tmdb.org/t/p/original";
+                    let movieList = {
+                        Id: movie.Id,
+                        Title: movie.Title,
+                        Img: movie.Img,
+                        Description: movie.Description,
+                        Genre: movie.Genre,
+                        ReleaseDate: movie.ReleaseDate,
+                        Score: movie.Score
+                    };
+                    console.log(movieList);
+
+                    let str = '';
+                    let img = movie.Img
+                    let title = movie.title;
+
+                    str += '<div class = "movie">';
+                    str += '<h3>' + movie.Title + '</h3>';
+                    str += `<img src = '${img}' />`;
+                    str += '</div>';
+                    str += '<div class = "info">';
+                    str += '<p>' + movie.Description + '</p>';
+                    str += '<p>';
+
+                    for (var i = 0; i < movie.Genre.length; i++) {
+                        str += movie.Genre[i].name + ' ';
+                    }
+
+                    str += '</p><br>';
+                    str += '<p>' + movie.ReleaseDate + '</p>';
+                    str += '<p>' + movie.Score + '</p>';
+                    $('#ph').html(str);
+             //   }
+           // }
+        }
+        function getNewMovieErrorCB(err)
+        {
+            console.log("Error : " + err);
+        }
+
+
+    </script>
+
+</head>
+<body>
+
+    <img id="back" src="https://icon-library.com/images/return-icon-png/return-icon-png-21.jpg" />
+
+
+    <h1>VIEW MOVIE</h1>
+    <div id="ph">
+        <div id="list"></div>       
+    </div>
+</body>
+</html>

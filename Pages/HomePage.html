@@ -1,0 +1,96 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Home page</title>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+            crossorigin="anonymous">
+    </script>
+
+    <script src="../Scripts/ajaxCalls.js"></script>
+
+    <style>
+
+        h1 {
+            text-align: center;
+        }
+
+        #big {
+            height: 150px;
+            width: 100%;
+            background-color: wheat;
+        }
+
+        .small {
+            width: 33.32%;
+            float: left;
+        }
+
+        button {
+            text-align: center;
+            width: 100%;
+        }
+
+        img {
+            height: 50px;
+            width: 60%;
+            margin-left: auto;
+            margin-right: auto;
+            display: block;
+        }
+    </style>
+
+    <script>
+
+        $(document).ready(function () {
+            checkConnection();
+        });
+
+
+        function checkConnection() {
+            if (localStorage) {
+                welcome();
+            }
+            else {
+                window.location.href = 'LoginPage.html';
+            }
+        }
+
+        function welcome() {
+            var account = JSON.parse(localStorage.getItem('companyId'));
+            console.log(account);
+            $("#Welcome").html("<h1>Welcome back " + account.NAME + "!!!</h1>");
+        }
+
+        function move(str) {
+            window.location.replace(str);
+        }
+
+    </script>
+
+</head>
+<body>
+
+    <div id="Welcome"></div>
+
+    <div id="big">     
+
+        <div class="small">
+            <button onclick="move('insert.html')">Insert Movie</button>
+        </div>
+        
+        <div class="small">
+            <button onclick="move('viewMovie.html')">DateSet</button>
+        </div>
+
+        <div class="small">
+            <button onclick="move('LoginPage.html')">Disconnect</button>
+        </div>
+
+    </div>
+
+
+</body>
+</html>

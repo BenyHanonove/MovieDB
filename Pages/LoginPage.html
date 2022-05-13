@@ -1,0 +1,140 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Login Page</title>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+            crossorigin="anonymous">
+    </script>
+
+    <script src="../Scripts/ajaxCalls.js"></script>
+
+
+    <style>
+
+
+
+        #ph {
+            position: center;
+            margin-left: 30%;
+            width: 35%;
+            background-color: wheat;
+            height: 150px;
+        }
+
+
+        #loginBtn #signUpBtn {
+            position: center;
+            margin-left: 15%;
+        }
+
+        #headLine {
+            background-color: wheat;
+            text-align: center;
+        }
+
+        #back {
+            height: 30px;
+            width: 30px;
+        }
+    </style>
+
+    <script>
+
+        $(document).ready(function () {
+            disconnect();
+        });
+
+        function disconnect() {
+            if (localStorage) {
+                localStorage.clear();
+                $("#signUpBtn").click(signUpPage);
+                $("#loginBtn").click(login);
+            }
+            else {
+                $("#signUpBtn").click(signUpPage);
+                $("#loginBtn").click(login);
+                console.log("LocalStorage is empty");
+            }
+        }
+
+        function signUpPage() {
+
+            window.location.href = 'form.html';
+
+        }
+
+
+
+        function login() {
+
+            var id = $("#userName").val();
+            var password = $("#password").val();
+
+            if (id.length > 5) {
+                if (password.length > 8) {
+
+                    let api = "../api/Companys";
+                    ajaxCall("GET", api,"", getLoginSuccessCB, getLoginErrorCB);
+                }
+                else { alert("password has to be 9 chars"); }
+            }
+            else { alert("user name has to be 6 chars"); }
+
+
+        }
+
+
+        function getLoginSuccessCB(companiesList) {
+
+            var id = $("#userName").val();
+            var password = $("#password").val();
+
+            for (var i = 0; i < companiesList.length; i++)
+            {
+                if (companiesList[i].USERNAME == id && companiesList[i].PASSWORD == password)
+                {                   
+                    localStorage.clear();                  
+                    localStorage.setItem("companyId", JSON.stringify(companiesList[i]));
+                   return window.location.href = 'HomePage.html';
+                    console.log("Moice")
+                }
+                    
+            }
+
+            return alert("Invalid login details");
+        }
+
+
+        function getLoginErrorCB(err) {
+            console.log("Error : " + err)
+        }
+
+    </script>
+
+
+</head>
+<body>
+
+
+
+
+    <h1 id="headLine">LoginPage</h1>
+
+    <div id="ph">
+        <br />
+        <label>User name:</label><br /><input type="text" id="userName" />
+        <br />
+        <label>Password:</label><br /><input type="text" id="password" />
+        <br />
+
+        <button id="loginBtn">Login</button>
+        <button id="signUpBtn">SignUp</button>
+
+    </div>
+
+
+</body>
+</html>

@@ -1,0 +1,168 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>SignUp</title>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+            crossorigin="anonymous">
+    </script>
+
+    <script src="../Scripts/ajaxCalls.js"></script>
+
+
+    <style>
+
+
+
+        #ph {
+            margin-left: 30%;
+            width: 35%;
+            background-color: wheat;
+            height: 380px;
+        }
+
+        #btn {
+            position: absolute;
+            margin-left: 15%;
+        }
+
+        #headLine {
+            background-color: wheat;
+            text-align: center;
+        }
+
+        #back {
+            height: 30px;
+            width: 30px;
+        }
+    </style>
+
+
+    <script>
+
+
+        $(document).ready(function () {
+            loadYears();
+            $("#btn").click(addForm);
+            $("#back").click(LoginPage);
+        });
+
+
+
+        function addForm() {
+
+            var userName = $("#userName").val();
+            var password = $("#password").val();
+            var name = $("#name").val();
+            var counteryName = $("#counteryName").val();
+            var establishingYear = $("#establishingYear").val();
+            var noTheater = $("#noTheater").val();
+            var logo = $("#logo").val();
+
+
+            if (userName.length > 5) {
+                if (password.length > 8) {
+                    if (name.length > 4) {
+                        if (counteryName.length > 0) {
+                            if (onlyNumbers(noTheater) && noTheater.length > 0) {
+
+                                let companyData = {
+                                    USERNAME: userName,
+                                    PASSWORD: password,
+                                    NAME: name,
+                                    COUNTRY: counteryName,
+                                    ESTYEAR: establishingYear,
+                                    THEATERNUM: noTheater,
+                                    LOGOIMG: logo
+                                };
+                                console.log(companyData);
+                                //var companyObj = JSON.stringify(companyData);
+                                addCompany(companyData);
+
+                            }
+                            else { alert("Theater num is wrong format"); }
+                        }
+                        else { alert("countery name is blank"); }
+                    }
+                    else { alert("name has to be 5 chars"); }
+                }
+                else { alert("password has to be 9 chars"); }
+            }
+            else { alert("user name has to be 6 chars"); }
+
+
+        }
+
+        function LoginPage() {
+
+            window.location.href = "LoginPage.html";
+
+        }
+
+
+        function onlyNumbers(str) {
+            return /^[0-9]+$/.test(str);
+        }
+
+        function loadYears() {
+
+            for (var i = 2022; i > 1899; i--) {
+
+                $('#establishingYear').append('<option>' + i + '</option>');
+            }
+
+        }
+
+
+        function addCompany(company) {
+
+            let api = "../api/Companys";
+            console.log(company)
+            ajaxCall("POST", api, JSON.stringify(company), addCompanySuccessCB, addCompanyErrorCB);
+            console.log(company)
+        }
+
+
+        function addCompanySuccessCB(InsertCompanyStatus) {
+            alert("Account added");
+            LoginPage();
+        }
+        function addCompanyErrorCB(err) {
+            console.log(err)
+        }
+
+    </script>
+
+</head>
+<body>
+
+    <img id="back" src="https://icon-library.com/images/return-icon-png/return-icon-png-21.jpg" />
+
+
+    <h1 id="headLine">MOVIE COMPANY ADDER</h1>
+
+    <div id="ph">
+        <br />
+        <label>User name:</label><br /><input type="text" id="userName" />
+        <br />
+        <label>Password:</label><br /><input type="text" id="password" />
+        <br />
+        <label>Name:</label><br /><input type="text" id="name" />
+        <br />
+        <label>Country name:</label><br /><input type="text" id="counteryName" />
+        <br />
+        <label>Est year:</label><br /><select id="establishingYear"></select>
+        <br />
+        <label>Theater number:</label><br /><input type="text" id="noTheater" />
+        <br />
+        <label>Company logo:</label><br /><input type="file" id="logo" />
+        <br />
+
+
+        <button id="btn">Enter!</button>
+
+    </div>
+</body>
+</html>
